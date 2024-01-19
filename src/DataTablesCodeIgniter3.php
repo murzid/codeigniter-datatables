@@ -1,6 +1,6 @@
 <?php
 
-namespace Ngekoding\CodeIgniterDataTables;
+namespace Murzid\CodeIgniterDataTables;
 
 class DataTablesCodeIgniter3 extends DataTables
 {

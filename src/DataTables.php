@@ -1,6 +1,6 @@
 <?php
 
-namespace Ngekoding\CodeIgniterDataTables;
+namespace Murzid\CodeIgniterDataTables;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +17,7 @@ class DataTables
     protected $returnedFieldNames = [];
     protected $formatters = [];
     protected $extraColumns = [];
-    
+
     protected $recordsTotal;
     protected $recordsFiltered;
 
@@ -28,7 +28,7 @@ class DataTables
     protected $sequenceNumberKey;
 
     protected $asObject = FALSE;
-    
+
     /**
      * The class constuctor
      * @param $queryBuilder
@@ -59,7 +59,7 @@ class DataTables
      * Format the value of spesific key
      * @param string $key The key to formatted
      * @param function $callback The formatter callback
-     * 
+     *
      * @return $this
      */
     public function format($key, $callback)
@@ -72,7 +72,7 @@ class DataTables
      * Add extra column
      * @param string $key The key of the column
      * @param $callback The extra column callback, like a formatter
-     * 
+     *
      * @return $this
      */
     public function addColumn($key, $callback)
@@ -86,7 +86,7 @@ class DataTables
      * Very useful when using SELECT JOIN to prevent column ambiguous
      * @param string $key The key of the column name (e.g. including the table name: posts.id or p.id)
      * @param string $alias The column alias
-     * 
+     *
      * @return $this
      */
     public function addColumnAlias($key, $alias)
@@ -98,7 +98,7 @@ class DataTables
     /**
      * Add multiple column alias
      * @param array $aliases The column aliases with key => value format
-     * 
+     *
      * @return $this
      */
     public function addColumnAliases($aliases)
@@ -117,7 +117,7 @@ class DataTables
     /**
      * Only return the column as defined
      * @param string|array $columns The columns to only will be returned
-     * 
+     *
      * @return $this
      */
     public function only($columns)
@@ -133,7 +133,7 @@ class DataTables
     /**
      * Return all column except this
      * @param string|array $columns The columns to except
-     * 
+     *
      * @return $this
      */
     public function except($columns)
@@ -206,7 +206,7 @@ class DataTables
 
                         // Skip extra column
                         if ($fieldIndex > $fieldNamesLength - 1) break;
-                        
+
                         $column = $this->returnedFieldNames[$fieldIndex];
                     }
 
@@ -214,7 +214,7 @@ class DataTables
                     $column = isset($this->columnAliases[$column])
                                 ? $this->columnAliases[$column]
                                 : $column;
-					
+
 					$globalSearch[] = sprintf("`%s` LIKE '%%%s%%'", $column, $keyword);
 				}
 			}
@@ -236,7 +236,7 @@ class DataTables
 
                     // Skip extra column
                     if ($fieldIndex > $fieldNamesLength - 1) break;
-                    
+
                     $column = $this->returnedFieldNames[$fieldIndex];
                 }
 
@@ -277,20 +277,20 @@ class DataTables
         if ($this->request->get('order') && count($this->request->get('order'))) {
 			$orders = [];
             $fieldNamesLength = count($this->returnedFieldNames);
-            
+
 			foreach ($this->request->get('order') as $order) {
 				$column_idx = $order['column'];
 				$request_column = $this->request->get('columns')[$column_idx];
-                
+
 				if (filter_var($request_column['orderable'], FILTER_VALIDATE_BOOLEAN)) {
                     $column = $request_column['data'];
 
                     if ( ! $this->asObject) {
                         // Skip sequence number
                         if ($this->sequenceNumber && $column == 0) continue;
-                        
+
                         $fieldIndex = $this->sequenceNumber ? $column - 1 : $column;
-                        
+
                         // Skip extra column
                         if ($fieldIndex > $fieldNamesLength - 1) break;
 
@@ -312,6 +312,9 @@ class DataTables
      */
     protected function limit()
     {
+        // Reload Request Data
+        $this->request = Request::createFromGlobals();
+
         if (($start = $this->request->get('start')) !== NULL && ($length = $this->request->get('length')) != -1) {
 			$this->queryBuilder->{$this->config->get('limit')}($length, $start);
 		}
@@ -319,7 +322,7 @@ class DataTables
 
     /**
      * Define the result as objects instead of arrays
-     * 
+     *
      * @return $this
      */
     public function asObject()
@@ -330,18 +333,22 @@ class DataTables
 
     /**
      * Generate the datatables results
+     *
+     * @param  bool  $output_buffer Send Output Buffer
+     * @param  array $extra Add Extra Data
+     * @return array|void
      */
-    public function generate()
+    public function generate($output_buffer = TRUE, $extra = [])
     {
         $this->setReturnedFieldNames();
+		$this->limit();
         $this->filter();
 		$this->order();
-		$this->limit();
 
 		$result = $this->queryBuilder->{$this->config->get('get')}();
 
 		$output = [];
-        
+
         $sequenceNumber = $this->request->get('start') + 1;
         foreach ($result->{$this->config->get('getResult')}() as $res) {
             // Add sequence number if needed
@@ -359,7 +366,7 @@ class DataTables
             foreach ($this->extraColumns as $key => $callback) {
                 $row[$key] = $callback($res);
             }
-            
+
             if ($this->asObject) {
                 $output[] = (object) $row;
             } else {
@@ -367,14 +374,33 @@ class DataTables
             }
         }
 
-        $response = new JsonResponse();
-        $response->setData([
+        // Set Output
+        $output = [
+
             'draw' => $this->request->get('draw'),
             'recordsTotal' => $this->recordsTotal,
             'recordsFiltered' => $this->recordsFiltered,
             'data' => $output
-        ]);
-        $response->send();
-        exit;
+        ];
+
+        // Add Extra Data
+        if (count($extra) > 0) {
+
+            $output = array_merge($output, $extra);
+        }
+
+        // Send Output Buffer
+        if ($output_buffer) {
+
+            $response = new JsonResponse();
+            $response->setData($output);
+            $response->send();
+            exit;
+
+        // Return Output Data
+        } else {
+
+            return $output;
+        }
     }
 }

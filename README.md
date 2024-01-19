@@ -13,7 +13,7 @@ If you are using CodeIgniter, let's go! You don't needs any extra requirements.
 You just need to use composer and everything is done.
 
 ```sh
-composer require ngekoding/codeigniter-datatables
+composer require murzid/codeigniter-datatables
 ```
 
 ## Usage
@@ -34,9 +34,9 @@ $queryBuilder = $this->db->select('p.*, c.name category')
 
 /**
  * The first parameter is the query builder instance
- * and the second is the codeigniter version (3 or 4) 
+ * and the second is the codeigniter version (3 or 4)
  */
-$datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
+$datatables = new Murzid\CodeIgniterDataTables\DataTables($queryBuilder, '3');
 $datatables->generate(); // done
 ```
 
@@ -50,7 +50,7 @@ $queryBuilder = $db->from('posts p')
                    ->select('p.*, c.name category')
                    ->join('categories c', 'c.id=p.category_id');
 
-$datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '4');
+$datatables = new Murzid\CodeIgniterDataTables\DataTables($queryBuilder, '4');
 $datatables->generate(); // done
 ```
 
@@ -125,20 +125,20 @@ Some basic functionalities already available, here is the full settings you can 
 ```php
 // General, use the second param to define the version
 // The default is 4
-$datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
+$datatables = new Murzid\CodeIgniterDataTables\DataTables($queryBuilder, '3');
 
 // CodeIgniter 3
-$datatables = new Ngekoding\CodeIgniterDataTables\DataTablesCodeIgniter3($queryBuilder);
+$datatables = new Murzid\CodeIgniterDataTables\DataTablesCodeIgniter3($queryBuilder);
 
 // CodeIgniter 4
-$datatables = new Ngekoding\CodeIgniterDataTables\DataTablesCodeIgniter4($queryBuilder);
+$datatables = new Murzid\CodeIgniterDataTables\DataTablesCodeIgniter4($queryBuilder);
 
 ```
 
 ### Available Options
 
 ```php
-$datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder);
+$datatables = new Murzid\CodeIgniterDataTables\DataTables($queryBuilder);
 
 // Return the output as objects instead of arrays
 $datatables->asObject();
@@ -177,20 +177,17 @@ $datatables->addColumnAliases([
 $datatables->addSequenceNumber();
 $datatables->addSequenceNumber('rowNumber'); // It will be rowNumber
 
-// Don't forget ot call generate to get the results
+// Don't forget ot call generate to get the results (send to output buffer)
 $datatables->generate();
+
+// Output Content
+// TRUE = Send to output buffer (default)
+// FALSE = Return generated data as array without send to output buffer
+$output_buffer = FALSE;
+
+// Additional Custom Data (array)
+$extra_data = ['customField' => 'customValue'];
+
+// Call generate to get the custom results
+$result = $datatables->generate($output_buffer, $extra_data);
 ```
-
-## Another Example
-
-I already use this library to the existing project with completed CRUD operations, you can found it [here](https://github.com/ngekoding/ci-crud). 
-
-Please look at these files:
-- application/composer.json
-- application/controllers/Post.php
-- application/models/M_post.php
-- application/views/template.php
-- application/views/posts/index-datatables.php
-- application/views/posts/index-datatables-array.php
-- application/helpers/api_helper.php
-- assets/js/custom.js

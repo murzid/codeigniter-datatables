@@ -1,12 +1,12 @@
 {
-  "name": "ngekoding/codeigniter-datatables",
+  "name": "murzid/codeigniter-datatables",
   "description": "DataTables server-side for CodeIgniter",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "Nur Muhammad",
-      "email": "blog.nurmuhammad@gmail.com"
+      "name": "Murzid in Action",
+      "email": "mymurzid@gmail.com"
     }
   ],
   "require": {

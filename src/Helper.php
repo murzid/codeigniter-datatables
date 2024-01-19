@@ -1,6 +1,6 @@
 <?php
 
-namespace Ngekoding\CodeIgniterDataTables;
+namespace Murzid\CodeIgniterDataTables;
 
 use PHPSQLParser\PHPSQLParser;
 
@@ -39,7 +39,7 @@ class Helper
      * Used when we use the arrays data source for ordering
      * @param $queryBuilder
      * @param Config $config
-     * 
+     *
      * @return array
      */
     public static function getFieldNames($queryBuilder, $config)
