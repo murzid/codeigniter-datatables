@@ -389,6 +389,12 @@ class DataTables
             $output = array_merge($output, $extra);
         }
 
+        // Query Debugging
+        if ( isset($extra['debug']) ) {
+
+            $output['debug'] = trim(str_replace(["\n", "\t"], ' ', $this->queryBuilder->last_query()));
+        }
+
         // Send Output Buffer
         if ($output_buffer) {
 

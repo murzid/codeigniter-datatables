@@ -186,7 +186,14 @@ $datatables->generate();
 $output_buffer = FALSE;
 
 // Additional Custom Data (array)
-$extra_data = ['customField' => 'customValue'];
+$extra_data = [
+
+  // Set Custom Data
+  'customField' => 'customValue',
+
+  // Enable Query Debugging (Last Query)
+  'debug' => TRUE,
+];
 
 // Call generate to get the custom results
 $result = $datatables->generate($output_buffer, $extra_data);

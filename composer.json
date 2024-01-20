@@ -5,7 +5,7 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Murzid in Action",
+      "name": "Murzid In Action",
       "email": "mymurzid@gmail.com"
     }
   ],
@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Ngekoding\\CodeIgniterDataTables\\": "src"
+      "Murzid\\CodeIgniterDataTables\\": "src/"
     }
   }
 }
