@@ -341,9 +341,9 @@ class DataTables
     public function generate($output_buffer = TRUE, $extra = [])
     {
         $this->setReturnedFieldNames();
-		$this->limit();
         $this->filter();
 		$this->order();
+		$this->limit();
 
 		$result = $this->queryBuilder->{$this->config->get('get')}();
 
